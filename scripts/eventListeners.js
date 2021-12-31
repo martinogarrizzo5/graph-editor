@@ -4,37 +4,32 @@ canvas.addEventListener("contextmenu", (event) => {
     event.preventDefault();
 });
 canvas.addEventListener("mousedown", (event) => {
+    const x = event.x + window.scrollX;
+    const y = event.y + window.scrollY;
     // left mouse button
     if (event.button === 0) {
-        // check if click is made inside the area of a node
-        let nodeInArea = findNodeInArea(event.x + window.scrollX, event.y + window.scrollY);
-        // draw the node
+        let nodeInArea = findNodeInArea(x, y);
         if (nodeInArea == null) {
+            // add new node
             isMovingNode = false;
-            const baseNodeSize = 100;
-            drawNode(event.x + window.scrollX - baseNodeSize / 2, event.y + window.scrollY - baseNodeSize / 2, baseNodeSize, baseNodeSize);
-            // add node to the table
-            const drawnNode = new Rectangle(event.x + window.scrollX - baseNodeSize / 2, event.y + window.scrollY - baseNodeSize / 2, baseNodeSize, baseNodeSize);
-            graph.addVertex(drawnNode);
+            const drawnNode = graph.addAndDrawVertex(x, y);
             selectedNode = drawnNode;
             repaintCanvas(canvasCtx);
         }
-        // move the node
         else {
-            isMovingNode = true;
-            movingNode = nodeInArea;
-            canvas.addEventListener("mousemove", moveNodeEvent);
+            // move existent node
+            setupMoveNodeEvent(nodeInArea);
         }
     }
     // right mouse button
     else if (event.button === 2) {
-        canvas.addEventListener("mousemove", scrollWindowEvent);
+        setupScrollWindowEvent();
     }
 });
 // clean events on mouse up
 canvas.addEventListener("mouseup", (event) => {
-    canvas.removeEventListener("mousemove", scrollWindowEvent);
-    canvas.removeEventListener("mousemove", moveNodeEvent);
+    removeMoveNodeEvent();
+    removeScrollWindowEvent();
 });
 function moveNodeEvent(event) {
     if (movingNode) {
@@ -59,25 +54,30 @@ canvas.addEventListener("dblclick", (event) => {
     }
 });
 window.addEventListener("keydown", (event) => {
+    if (event.key === "Shift") {
+        canvas.addEventListener("click", connectNodesEvent);
+    }
     if (selectedNode) {
         event.preventDefault();
-        if (event.key == "Control") {
+        if (event.key == "Control" || event.key == "Shift") {
             return;
         }
         if (event.key === "x" && event.ctrlKey) {
             graph.deleteNode(selectedNode.id);
+            selectedNode = null;
+            firstNode = null;
+            secondNode = null;
         }
         else if (event.key === "Backspace") {
             // remove last character
             selectedNode.text = selectedNode.text.slice(0, selectedNode.text.length - 1);
         }
-        else if (event.key === "Shift") {
-            canvas.addEventListener("click", connectNodesEvent);
-        }
         else {
             selectedNode.text += event.key;
         }
-        selectedNode.width = Math.max(selectedNode.initialWidth, selectedNode.text.length * 15);
+        if (selectedNode) {
+            selectedNode.width = Math.max(selectedNode.initialWidth, selectedNode.text.length * 15);
+        }
     }
     repaintCanvas(canvasCtx);
 });

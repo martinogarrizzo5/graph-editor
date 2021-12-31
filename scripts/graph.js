@@ -9,6 +9,14 @@ class Graph {
         this.nodes.set(node.id, node);
         this.adjacentList.set(node.id, []);
     }
+    addAndDrawVertex(x, y) {
+        const baseNodeSize = 100;
+        drawNode(x - baseNodeSize / 2, y - baseNodeSize / 2, baseNodeSize, baseNodeSize);
+        // add node to the table
+        const drawnNode = new Rectangle(x - baseNodeSize / 2, y - baseNodeSize / 2, baseNodeSize, baseNodeSize);
+        this.addVertex(drawnNode);
+        return drawnNode;
+    }
     addEdge(node1, node2) {
         const edges = this.adjacentList.get(node1.id);
         if (edges) {

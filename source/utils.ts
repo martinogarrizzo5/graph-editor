@@ -116,3 +116,21 @@ function connectNodesEvent(event: MouseEvent) {
   console.log(firstNode, secondNode);
   repaintCanvas(canvasCtx);
 }
+
+function setupMoveNodeEvent(node: Rectangle) {
+  isMovingNode = true;
+  movingNode = node;
+  canvas!.addEventListener("mousemove", moveNodeEvent);
+}
+
+function removeMoveNodeEvent() {
+  canvas!.removeEventListener("mousemove", moveNodeEvent);
+}
+
+function setupScrollWindowEvent() {
+  canvas!.addEventListener("mousemove", scrollWindowEvent);
+}
+
+function removeScrollWindowEvent() {
+  canvas!.removeEventListener("mousemove", scrollWindowEvent);
+}
