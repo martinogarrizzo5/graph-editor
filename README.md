@@ -10,6 +10,8 @@ Left Click => Create node / Move node
 
 Shift + Left Click => Mark for connection (green color)
 
+Ctrl + X => Delete Node
+
 Double Left Click => Select node (yellow color)
 
 Right click => Scroll through the editor
